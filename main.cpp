@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept> // For std::runtime_error to throw errors in case of issues.
 using namespace std;
 
 const int MAX_SIZE = 100;
@@ -8,84 +9,110 @@ class H_Stack
 {
 private:
 T array[MAX_SIZE];
-T *top;
-T *start;
+T* top;
+T* start;
+int size = 0;
 
 public:
 
 H_Stack(){
-    top = array;
-    start = array;
+  top = array;
+  start = array;    
 }
 
-bool is_full (){
-    return (start + MAX_SIZE == top);
+bool is_full() const {
+  return (start + MAX_SIZE == top);
 }
 
-bool is_empty(){
-    return (top == start);
+bool is_empty() const {
+  return (top == start);
 }
 
-void push(T element)
-  {
-    if (!is_full())
-    {
-      *top = element;
-      top++;
-    }
-  }
+void push(const T& element) {
 
-T pop()
-  {
-    if (!is_empty())
-    {
-      top--;
-      T poppedElement = *top;
-      return poppedElement;
-    }
-    else
-    {
-      throw "Encountered error during pop operation.";
-    }
+  if (!is_full()) {
+    *top = element;
+    top++;
+    size++;
+  } 
+  else {
+    throw std::runtime_error("Stack overflow: Cannot push onto a full stack.");
   }
+}
 
-
-T peek()
-  {
-    if (!is_empty())
-    {
-      top--;
-      T poppedElement = *top;
-      top++;
-      return poppedElement;
-    }
-    else
-    {
-      throw "Encountered error during peek operation.";
-    }
+T pop() {
+  if (!is_empty()) {
+    top--;
+    size--;
+    return *top;
   }
+  else {
+      throw std::runtime_error("Stack underflow: Cannot pop from an empty stack.");
+  }
+}
+
+int get_size() const {
+  return size;
+}
+
+T peek() const {
+  if (!is_empty()) {
+    return *(top - 1);
+  } 
+  else {
+    throw std::runtime_error("Stack is empty: Cannot peek.");
+  }
+}
+
 };
 
-////////////////// --- driver --- /////////////////
+class Dish {
+private:
+    string description;
+
+public:
+    Dish() : description("Unknown dish") {} // Add default constructor
+    Dish(string description) {
+        this->description = description;
+    }
+
+    string get_description() const {
+        return this->description;
+    }
+};
+
+////////////////// --- Driver --- /////////////////
 int main() {
 
-H_Stack <int> s1;
+  Dish one_dish("A dish with one fish pattern on it");
+  Dish two_dish("A dish with two fish patterns on it");
+  Dish red_dish("A dish with a red fish pattern on it");
+  Dish blue_dish("A dish with a blue fish pattern on it");
 
-cout << "\nPushing elements into the stack: 1, 2, 3, 4, 5";
-s1.push(1);
-s1.push(2);
-s1.push(3);
-s1.push(4);
-s1.push(5);
+  H_Stack<Dish> s1;
 
-cout << "\nPeeking! Value: " << s1.peek();
+  cout << "\nStack size before pushes: " << s1.get_size();
 
-cout << "\nPopping elements from the stack.";
-while(!s1.is_empty()){
-    cout << "\nPopped: " << s1.pop();
-}
+  cout << "\nPushing elements into the stack:";
+  cout << "\nPushing: " << one_dish.get_description();
+  s1.push(one_dish);
+  cout << "\nPushing: " << two_dish.get_description();
+  s1.push(two_dish);
+  cout << "\nPushing: " << red_dish.get_description();
+  s1.push(red_dish);
+  cout << "\nPushing: " << blue_dish.get_description();
+  s1.push(blue_dish);
+  cout << "\nStack size after pushes: " << s1.get_size();
 
-cout << "\nDemonstration completed. Good bye.";
+  cout << "\nTop of stack (peek): " << s1.peek().get_description();
 
+  cout << "\nPopping elements from the stack:";
+  while (!s1.is_empty()) {
+      cout << "\nPopped: " << s1.pop().get_description();
+  }
 
+  cout << "\nStack size after pops: " << s1.get_size();
+  cout << "\nDemonstration completed. Goodbye.\n";
+
+  return 0;
 }
