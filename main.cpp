@@ -1,5 +1,5 @@
 #include <iostream>
-#include <stdexcept> // For std::runtime_error to throw errors in case of issues.
+#include <stdexcept> 
 using namespace std;
 
 const int MAX_SIZE = 100;
@@ -36,7 +36,7 @@ void push(const T& element) {
     size++;
   } 
   else {
-    throw std::runtime_error("Stack overflow: Cannot push onto a full stack.");
+    cerr << "Error: Stack is full. Push operation failed." << endl;
   }
 }
 
@@ -71,7 +71,7 @@ private:
     string description;
 
 public:
-    Dish() : description("Unknown dish") {} // Add default constructor
+    Dish() : description("Unknown dish") {} 
     Dish(string description) {
         this->description = description;
     }
